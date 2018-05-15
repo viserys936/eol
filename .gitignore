@@ -1,0 +1,14 @@
+db.sqlite3
+__pycache__
+*.pyc
+.idea
+baseLine.txt
+list_count.txt
+rewrite.txt
+modeling/static/data2.json
+Procfile
+eol/Include
+eol/Lib
+eol/Scripts
+requirements.txt
+eol/Scripts

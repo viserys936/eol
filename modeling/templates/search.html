@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<title>EOL homepage</title>
+		{% load staticfiles %}
+		<link rel="stylesheet" href="{% static "search.css" %}"  />
+	</head>
+	<body>
+		<form id="search_form" method="POST" action="results">
+			一般名稱: <input class="search_box" name="item_text" placeholder="輸入物種一般名稱">
+			{% csrf_token %}
+		</form>
+		<div class="search_results">
+		</div>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+		<script src="{% static "jquery.auto-complete.min.js" %}"></script>
+		<script>
+			$('input[name="item_text"]').autoComplete({
+    			minChars: 2,
+			    source: function(term, response){
+					$.getJSON('auto/', { item_text: term }, function(data){ response(data); });
+				}
+			});
+			$('form').on('submit', function(e){
+				e.preventDefault();
+				$.ajax({
+					url : 'results',
+					data:{'item_text': $('.search_box').attr('value')},
+					type: 'POST',
+					success: function(data){
+						$('form').after('<div class="search_results"></div>');
+						$('.search_results').html(data);
+						$('.search_results').css('margin-top', '5px');
+						$('.autocomplete-suggestions').css('visibility', 'hidden');
+						/* maybe false code
+						var get_json = '/show/' + $('.c_id a').text();
+						$.get(get_json,function(data){
+							$('#index_ul').attr('data-x', data);
+						});
+						*/
+					}
+				});
+			});
+			$("input[name='item_text']").keydown(function(e){
+				if(e.which != 13){
+					$('.autocomplete-suggestions').css('visibility', 'visible');
+					$('.search_results').remove();
+				}
+			});
+		</script>
+	</body>
+</html>

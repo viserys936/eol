@@ -1,0 +1,23 @@
+#showPuzzle {
+	position: relative;
+	background: #000;
+	cursor: pointer;
+	
+}
+#puzzleImg {
+	display: none;
+}
+
+button{
+	font-size:18px;
+	margin-left:0px;
+	width:100px;
+	height:40px;
+	background:brown;
+	margin:0px auto;
+	font-weight:bold;
+}
+
+#btn1,#btn3{
+	display:none;
+}

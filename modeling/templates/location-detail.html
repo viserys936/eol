@@ -1,0 +1,85 @@
+﻿<html>
+	<title>EOL homepage</title>
+	{% load staticfiles %}
+	<body>
+
+		{% for creature in Creature %}
+		<table style="border:2px #81AC00 solid;" border="1">
+			
+			<tr>
+			    <td width="100">EOL編號: </td>
+			    <td class="c_id" width="500"><a href="/show/{{creature.c_id}}">{{ creature.c_id}}</a></td>
+			</tr>
+			<tr>
+			    <td width="50">學名: </td>
+			    <td width="500">{{ creature.s_name}}</td>
+			</tr>
+			<tr>
+			    <td width="50">一般名稱: </td>
+			    <td width="500">{{ creature.c_name}}</td>
+			</tr>
+			<!--
+			<tr>
+			    <td>生物分類階層: </td>
+			    <td>{{ creature.category}}</td>
+			</tr>
+			--!>
+			<tr>
+			    <td>IUCN保育等級: </td>
+			    <td>{{ creature.iucn_level}}</td>
+			</tr>
+			<!--
+			<tr>
+			    <td>保育等級等地: </td>
+			    <td>{{ creature.level}}</td>
+			</tr>
+			<tr>
+			    <td>居住方格: </td>
+			    <td>{{ creature.location}}</td>
+			</tr>
+			<tr>
+			    <td>居住方格數目: </td>
+			    <td>{{ creature.location_number}}</td>
+			</tr>
+			<tr>
+			    <td>居住棲地種類: </td>
+			    <td>{{ creature.location_style}}</td>
+			</tr>
+			--!><!---->
+		</table>
+		{% endfor %}
+		<table>
+			<tr>
+			{% for x in pages %}
+				{% if current == x%}
+				<td><b>{{ x }}</b></td>
+				{% endif%}
+				{% if current != x%}
+				<td class="ls"><a href="/location_detail/{{ x }}/?locations={{loc}}">{{ x }}</td>
+				{% endif %}
+				{% if forloop.counter|divisibleby:30 %}
+				</tr><tr>
+				{% endif %}
+			{% endfor %}
+			</tr>
+		</table>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+	<script >
+		$('.ls a').on('click',function(e){
+			e.preventDefault();
+			x = e.target.childNodes[0].nodeValue;
+			$.get( "/location_detail/"+x+"/?locations={{loc}}", function( data ) {
+  				$( "#show" ).html( data );
+			});
+		});
+
+		$('.c_id a').on('click', function(e){
+			if($('#main').length != 0)
+				e.preventDefault();
+			x = e.target.getAttribute("href");
+			$('#main').html('<object data='+ x +'>');
+    		$('#main object').css('width', '1050px').css('height', '1650px');
+		});
+	</script>
+	</body>
+</html>

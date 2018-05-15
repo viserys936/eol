@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		{% load staticfiles %}
+		<meta charset="utf-8" />
+		<link rel="stylesheet" href="{% static "slice.css" %}"  />
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+		<script src="{% static "slice.js" %}"></script>
+		<script language="javascript">
+			window.addEventListener('load',doFirst,false);
+			$(document).mousemove(function (e) {
+				x.value = e.pageX + document.documentElement.scrollTop;
+				y.value = e.pageY + document.documentElement.scrollLeft;
+			});
+			//document.onmousemove = getMouse;
+		</script>
+		<title>WorldMap</title>
+	</head>
+	<body>
+		<div id="wrapper">
+			<div id="showPuzzle" style="float:left;"></div>
+			<div id="right" style="float:right;width:520px;">
+				<div id="color_plate" style="float:left;width:250px;height:235px;border:1px SeaGreen solid;padding:5px">
+					<div class="one" style="width:20px;height:20px;background:Black;opacity:0.5"><p style="margin-left:25px;">Creatures&nbsp;=&nbsp;0</p></div>
+					<div class="two" style="width:20px;height:20px;background:Aquamarine;opacity:0.5"><p style="margin-left:25px;">0&nbsp;<&nbsp;Creatures&nbsp;<&nbsp;10</p></div>
+					<div class="three" style="width:20px;height:20px;background:LimeGreen;opacity:0.5"><p style="margin-left:25px;">10&nbsp;<=&nbsp;Creatures&nbsp;<&nbsp;100</p></div>
+					<div class="four" style="width:20px;height:20px;background:GoldenRod;opacity:0.5"><p style="margin-left:25px;">100&nbsp;<=&nbsp;Creatures&nbsp;<&nbsp;1000</p></div>
+					<div class="five" style="width:20px;height:20px;background:PaleVioletRed;opacity:0.5"><p style="margin-left:25px;">1000&nbsp;<=&nbsp;Creatures&nbsp;<&nbsp;3999</p></div>
+					<div class="six" style="width:20px;height:20px;background:Crimson;opacity:0.5"><p style="margin-left:25px;">Creatures&nbsp;>=&nbsp;4000</p></div>
+				</div>
+				<div style="float:right;margin-right:100px">
+					<input class="color">
+				</div>
+			</div>
+		</div>
+		<br>
+		<div style="display:none;">
+			<input name="send" type="button" value="Send!" onClick="calSum(array)">
+			<br>
+			X:<input type="text" id="x" size="4"><br>
+			Y:<input type="text" id="y" size="4">
+		</div>
+		<img src="{% static "images/WorldMap.png" %}" id="puzzleImg"/>
+		<form id="form1" method="POST" action="/location_detail">
+			<input type="hidden" name="locations" id="locations" value="">
+			{% csrf_token %}
+		</form>
+		<script>
+			$.getJSON( "/static/data3.json", function( data ) {
+				var items = [];
+				$.each( data, function( key, val ) {
+    				//items.push( "<li id='" + key + "'>" + val + "</li>" );
+    				if(val<1)
+    					$('#showPuzzle span').eq(parseInt(key)).append('<div style="width:16px;height:16px;background:Black;opacity:0.3"></div>');
+    				else if(val<10)
+    					$('#showPuzzle span').eq(parseInt(key)).append('<div style="width:16px;height:16px;background:Aquamarine;opacity:0.3"></div>');
+    				else if(val<100)
+    					$('#showPuzzle span').eq(parseInt(key)).append('<div style="width:16px;height:16px;background:LimeGreen;opacity:0.3"></div>');
+					else if(val<1000)
+    					$('#showPuzzle span').eq(parseInt(key)).append('<div style="width:16px;height:16px;background:GoldenRod;opacity:0.3"></div>');
+					else if(val<4000)
+    					$('#showPuzzle span').eq(parseInt(key)).append('<div style="width:16px;height:16px;background:PaleVioletRed;opacity:0.3"></div>');
+					else
+    					$('#showPuzzle span').eq(parseInt(key)).append('<div style="width:16px;height:16px;background:Crimson;opacity:0.5"></div>');
+  				});
+			});
+		</script>
+		<script type="text/javascript" src="{% static "jscolor/jscolor.js" %}"></script>
+		<script>
+			$('#color_plate').on('click',function(e){
+				$color = $('div input').attr('value');
+				e.target.style.background = '#'+$color;
+
+				$.getJSON( "/static/data3.json", function( data ) {
+					var items = [];
+					$.each( data, function( key, val ) {
+						if(val<1 && e.target.getAttribute('class') == 'one') change(key, $color);
+						if(val>=1 && val <10 && e.target.getAttribute('class') == 'two') change(key, $color);
+						if(val>=10 && val <100 && e.target.getAttribute('class') == 'three') change(key, $color);
+						if(val>=100 && val <1000 && e.target.getAttribute('class') == 'four') change(key, $color);
+						if(val>=1000 && val <4000 && e.target.getAttribute('class') == 'five') change(key, $color);
+						if(val>=4000 && e.target.getAttribute('class') == 'six') change(key, $color);
+					});
+				});
+
+				function change(key, color){
+					$('#showPuzzle span').eq(parseInt(key)).empty();
+							$block = $('#showPuzzle span').eq(parseInt(key));
+							var x = document.createElement('DIV');
+							var s = "width:16px;height:16px;opacity:0.5;background:#"+color;
+							x.style.cssText = s;
+							$block.append(x);
+				}
+			});
+		</script>
+	</body>
+</html>
